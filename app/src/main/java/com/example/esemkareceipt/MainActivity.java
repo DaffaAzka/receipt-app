@@ -1,5 +1,6 @@
 package com.example.esemkareceipt;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,12 +33,17 @@ public class MainActivity extends AppCompatActivity {
         EditText etEmail = findViewById(R.id.editTextText2);
         EditText etPassword = findViewById(R.id.editTextText3);
         Button btn = findViewById(R.id.button);
+        Button btnR = findViewById(R.id.button3);
 
         btn.setOnClickListener(v -> {
             String username = etEmail.getText().toString();
             String password = etPassword.getText().toString();
 
             new LoginTask().execute(username, password);
+        });
+
+        btnR.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, RegisterActivity.class));
         });
 
 
