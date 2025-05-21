@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,59 +14,66 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.esemkareceipt.R;
-import com.example.esemkareceipt.model.Category;
+import com.example.esemkareceipt.model.Recipe;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
-public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder> {
+public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipeViewHolder> {
 
-    private List<Category> categories;
-    private OnItemClickListener clickListener;
+
+    private ArrayList<Recipe> recipes;
+    private RecipesAdapter.OnItemClickListener clickListener;
 
     public interface OnItemClickListener  {
-        void onItemClick(Category category);
+        void onItemClick(Recipe recipe);
     }
 
-    public static class CategoryViewHolder extends RecyclerView.ViewHolder {
+    public static class RecipeViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tv2;
-        ImageView iv;
+        TextView recipes_name, recipes_desc;
+        ImageView recipes_image;
 
-        public CategoryViewHolder(@NonNull View itemView) {
+        public RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
-            tv2 =itemView.findViewById(R.id.name);
-            iv = itemView.findViewById(R.id.icon);
+            recipes_name =itemView.findViewById(R.id.recipes_name);
+            recipes_desc =itemView.findViewById(R.id.recipes_desc);
+            recipes_image = itemView.findViewById(R.id.recipes_image);
         }
     }
 
-    public CategoriesAdapter(List<Category> categories, OnItemClickListener clickListener) {
-        this.categories = categories;
+
+    public RecipesAdapter(ArrayList<Recipe> recipes, RecipesAdapter.OnItemClickListener clickListener) {
+        this.recipes = recipes;
         this.clickListener = clickListener;
     }
 
+
+
     @NonNull
     @Override
-    public CategoriesAdapter.CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.categories_list, parent, false);
-        return new CategoryViewHolder(view);
+    public RecipesAdapter.RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recipes_list, parent, false);
+        return new RecipesAdapter.RecipeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CategoriesAdapter.CategoryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecipesAdapter.RecipeViewHolder holder, int position) {
 
-        Category category = categories.get(position);
+        Recipe recipe = recipes.get(position);
 
-        holder.tv2.setText(category.getName());
+        holder.recipes_name.setText(recipe.getTitle());
+        holder.recipes_desc.setText(recipe.getDescription());
 
-        new ImageLoaderTask(holder.iv).execute(category.getIcon());
+        new RecipesAdapter.ImageLoaderTask(holder.recipes_image).execute(recipe.getImage());
 
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
-                clickListener.onItemClick(category);
+                clickListener.onItemClick(recipe);
             }
         });
 
@@ -75,12 +81,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
     @Override
     public int getItemCount() {
-        return categories.size();
+        return recipes.size();
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void updateCategories(List<Category> newC) {
-        categories = newC;
+    public void updateRecipes(ArrayList<Recipe> newC) {
+        recipes = newC;
         notifyDataSetChanged();
     }
 
@@ -95,7 +101,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         @Override
         protected Bitmap doInBackground(String... urls) {
             try {
-                URL url = new URL("http://10.0.2.2:5000/images/categories/" + urls[0]);
+                URL url = new URL("http://10.0.2.2:5000/images/recipes/" + urls[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setDoInput(true);
                 connection.connect();

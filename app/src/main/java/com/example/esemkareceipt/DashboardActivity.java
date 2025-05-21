@@ -33,7 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DashboardActivity extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity implements CategoriesAdapter.OnItemClickListener {
 
     TextView v;
 
@@ -49,10 +49,19 @@ public class DashboardActivity extends AppCompatActivity {
 //        v = findViewById(R.id.textView);
         RecyclerView rv = findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CategoriesAdapter(categoryArrayList);
+        adapter = new CategoriesAdapter(categoryArrayList, this);
         rv.setAdapter(adapter);
 
         new CategoryTask().execute();
+
+    }
+
+    @Override
+    public void onItemClick(Category category) {
+
+        Intent intent = new Intent(DashboardActivity.this, RecipeActivity.class);
+        intent.putExtra("CATEGORY_ID", "" + category.getId());
+        startActivity(intent);
 
     }
 
@@ -102,6 +111,8 @@ public class DashboardActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 
 //    private class ProfileTask extends AsyncTask<Void, Void, User> {
